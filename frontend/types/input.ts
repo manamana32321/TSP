@@ -1,13 +1,13 @@
-import { InputType } from "../stores/inputStore";
+export type InputType = "text" | "button"
 
 export interface Input {
-  inputType: InputType
-  options: Option[]
+  type: InputType
+  options?: InputOption[]
 }
 
-export interface Option {
+export interface InputOption {
   id: number;
   selectId: number;
   name: string;
-  disabled: boolean;
+  disabled?: boolean;
 }

@@ -8,7 +8,7 @@ interface ButtonInputProps {
 }
 
 export default function ButtonInput({ input, maxButtonCount }: ButtonInputProps) {
-  const buttonCountDiff = maxButtonCount - input.options.length;
+  const buttonCountDiff = maxButtonCount - input.options ? input.options.length : 0;
   const blankButtons = [];
 
   for (let i = 0; i < buttonCountDiff; i++) {

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Input, Option } from "../../../types/input";
+import { Input, InputOption } from "../../../types/input";
 import React from "react";
 
 interface TextSelectorProps {
-  option: Option;
+  option: InputOption;
 }
 
 function TextSelector({ option }: TextSelectorProps) {

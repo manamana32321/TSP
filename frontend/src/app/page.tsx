@@ -1,9 +1,12 @@
+'use client'
 import styles from './style.module.css'
-
+import { Provider, useDispatch } from 'react-redux'
+import { store } from '@/store'
 import SidebarLeft from '../components/SidebarLeft'
 import SidebarRight from '../components/SidebarRight'
 import Input from '../components/Input'
 import Dialog from '../components/Dialog'
+import Client from '../client'
 
 import {
   ResizableHandle,
@@ -11,7 +14,22 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 
+import Script from '../../scripts/testScript1'
+
 export default function Home() {
+  return (
+    <Provider store={store}>
+      <HomeContent />
+    </Provider>
+  );
+}
+
+function HomeContent() {
+  const dispatch = useDispatch();
+  const client = Client.getInstance(store, dispatch)
+  client.ui.setInputType('button')
+  client.runScript(Script)
+
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
