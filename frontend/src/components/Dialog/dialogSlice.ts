@@ -1,10 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import React from "react";
-
-export type ContentType = string | React.ReactNode
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface DialogState {
-  content: ContentType
+  content: string
 }
 
 const initialState: DialogState = {
@@ -15,7 +12,7 @@ export const dialogSlice = createSlice({
   name: 'dialog',
   initialState,
   reducers: {
-    setContent: (state, action) => {
+    setContent: (state, action: PayloadAction<string>) => {
       state.content = action.payload
     }
   }

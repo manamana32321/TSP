@@ -1,6 +1,6 @@
 'use client'
 import styles from './style.module.css'
-import { Provider, useDispatch } from 'react-redux'
+import { Provider } from 'react-redux'
 import { store } from '@/store'
 import SidebarLeft from '../components/SidebarLeft'
 import SidebarRight from '../components/SidebarRight'
@@ -25,9 +25,7 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const dispatch = useDispatch();
-  const client = Client.getInstance(store, dispatch)
-  client.ui.setInputType('button')
+  const client = Client.getInstance()
   client.runScript(Script)
 
   return (

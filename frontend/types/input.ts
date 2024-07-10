@@ -2,12 +2,12 @@ export type InputType = "text" | "button"
 
 export interface Input {
   type: InputType
-  options?: InputOption[]
+  options: InputOption[]
 }
 
 export interface InputOption {
-  id: number;
-  selectId: number;
+  selectId: string;
   name: string;
+  description?: string;
   disabled?: boolean;
 }
