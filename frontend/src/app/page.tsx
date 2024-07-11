@@ -14,7 +14,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 
-import Script from '../../scripts/testScript1'
+import JSScript from '../../scripts/testScript1'
+import TSScript from '../../scripts/testScript2'
 
 export default function Home() {
   return (
@@ -26,7 +27,7 @@ export default function Home() {
 
 function HomeContent() {
   const client = Client.getInstance()
-  client.runScript(Script)
+  client.runScript(TSScript)
 
   return (
     <div className={styles.container}>

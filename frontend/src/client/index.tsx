@@ -1,23 +1,44 @@
-import { store, RootState } from '@/store';
+import { store } from '@/store';
 import { InputOption } from '../../types/input';
 import { setInputType, setOptions, setUserInput, setWaitForUserInput } from '@/components/Input/inputSlice';
 import { setContent } from '@/components/Dialog/dialogSlice';
 
+import Level, { GridLevel } from '../../types/game/position/level';
+import { LevelError, TileDoesNotExistError } from '../../types/game/position/error';
+import Tile from '../../types/game/position/tile';
+import BaseEntity from '../../types/game/base';
+import Actor from '../../types/game/actor';
+import Item from '../../types/game/item';
+
 export default class Client {
   private static instance: Client;
-  public readonly dispatch;
-  public readonly selector;
+  private readonly dispatch;
+  private userInputResolver: ((value: string) => void) | null = null;
+  public currentActor: Actor | null = null;
+  public currentLevel: Level | null = null;
+  public currentTile: Tile | null = null;
+
   public readonly ui: {
     setInputType: typeof setInputType
-  };
-  private userInputResolver: ((value: string) => void) | null = null;
+  }
+  public readonly game = {
+    classes: {
+      level: {Level, GridLevel, Tile},
+      entity: {BaseEntity, Actor, Item},
+    },
+    errors: {
+      level: {LevelError, TileDoesNotExistError}
+    },
+    current: {
+      player: this.currentActor,
+      map: this.currentLevel,
+      tile: this.currentTile,
+    }
+  }
 
   private constructor() {
     this.dispatch = store.dispatch;
-    this.selector = (selectorFn: (state: RootState) => any) => {
-      return selectorFn(store.getState());
-    };
-    this.ui = {
+    this.ui = { // proxy
       setInputType
     };
   }
