@@ -1,4 +1,5 @@
 import Client from "@/client"
+import Position from "../types/game/position"
 
 export default async function Script(client: Client) {
   const gameClasses = client.game.classes
@@ -7,15 +8,16 @@ export default async function Script(client: Client) {
   client.game.current.player = player
   const item1 = new gameClasses.entity.Item("Bow of Iris")
   const item2 = new gameClasses.entity.Item("Jem")
-  const startingPoint = baseLevel.getTile(0, 0)
-  client.game.current.map = baseLevel
-  client.game.current.tile = startingPoint
-  startingPoint.addEntity(item2)
+  const startingPosition = new Position(baseLevel, 0, 0)
+
+  player.inventory?.add(item1)
+  player.place(startingPosition)
+  startingPosition.addEntity(item2)
 
   let i = await client.dialog(
     `It seems you are using typescript...
-    Glad to meet you ${client.game.current.player.name}.
-    You are now in ${client.game.current.map.name}
+    Glad to meet you ${player.name}.
+    You are now in ${player.position?.level.name}
     `,
     [
       { selectId: '101', name: 'Greet' },

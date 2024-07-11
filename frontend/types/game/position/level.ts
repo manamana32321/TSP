@@ -1,6 +1,6 @@
 import BaseEntity from "../base";
-import Tile from "./tile";
-import { TileDoesNotExistError } from "./error";
+import Position from "./";
+import { InvalidPositionError } from "./error";
 
 export default class Level extends BaseEntity {
   constructor(public name: string) {
@@ -9,7 +9,7 @@ export default class Level extends BaseEntity {
 }
 
 export class GridLevel extends Level {
-  private grid: Tile[][]
+  private grid: Position[][]
 
   constructor(
     public name: string,
@@ -20,10 +20,15 @@ export class GridLevel extends Level {
     this.grid = this.createGrid(xLength, yLength);
   }
 
-  private createGrid(xLength: number, yLength: number): Tile[][] {
-    const grid: Tile[][] = [];
+  private createGrid(xLength: number, yLength: number): Position[][] {
+    const grid: Position[][] = [];
     for (let y = 0; y < yLength; y++) {
-      grid[y] = new Array(xLength).fill(new Tile(this))
+      grid[y] = new Array(xLength).fill(null)
+    }
+    for (let y = 0; y < yLength; y++) {
+      for (let x = 0; x < xLength; x++) {
+        grid[y][x] = new Position(this, x, y)
+      }
     }
     return grid;
   }
@@ -35,7 +40,7 @@ export class GridLevel extends Level {
 
   getTile(x: number, y: number) {
     if (!this.isValidTilePosition(x, y)) {
-      throw new TileDoesNotExistError(`No tile found on (${x}, ${y})`)
+      throw new InvalidPositionError(`No tile found on (${x}, ${y})`)
     }
     return this.grid[y][x]
   }

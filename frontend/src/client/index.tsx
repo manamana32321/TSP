@@ -3,9 +3,9 @@ import { InputOption } from '../../types/input';
 import { setInputType, setOptions, setUserInput, setWaitForUserInput } from '@/components/Input/inputSlice';
 import { setContent } from '@/components/Dialog/dialogSlice';
 
+import Position from '../../types/game/position';
 import Level, { GridLevel } from '../../types/game/position/level';
-import { LevelError, TileDoesNotExistError } from '../../types/game/position/error';
-import Tile from '../../types/game/position/tile';
+import { PositionError, InvalidPositionError } from '../../types/game/position/error';
 import BaseEntity from '../../types/game/base';
 import Actor from '../../types/game/actor';
 import Item from '../../types/game/item';
@@ -15,24 +15,20 @@ export default class Client {
   private readonly dispatch;
   private userInputResolver: ((value: string) => void) | null = null;
   public currentActor: Actor | null = null;
-  public currentLevel: Level | null = null;
-  public currentTile: Tile | null = null;
 
   public readonly ui: {
     setInputType: typeof setInputType
   }
   public readonly game = {
     classes: {
-      level: {Level, GridLevel, Tile},
+      level: {Position, Level, GridLevel},
       entity: {BaseEntity, Actor, Item},
     },
     errors: {
-      level: {LevelError, TileDoesNotExistError}
+      level: {PositionError, InvalidPositionError}
     },
     current: {
       player: this.currentActor,
-      map: this.currentLevel,
-      tile: this.currentTile,
     }
   }
 

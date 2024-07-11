@@ -1,11 +1,23 @@
+import BaseEntity from "../base";
 import Level from "./level";
-import Tile from "./tile";
 
 export default class Position {
+  public entities: BaseEntity[];
+
   constructor(
     public level: Level,
-    public tile: Tile,
-  ) {}
+    public readonly x: number, public readonly y: number
+  ) {
+    this.entities = []
+  }
+
+  addEntity(e: BaseEntity): void {
+    this.entities.push(e)
+  }
+
+  removeEntity(e: BaseEntity) {
+    this.entities = this.entities.filter(entity => entity !== e);
+  }
 }
 
 export interface Placable {
