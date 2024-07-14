@@ -5,14 +5,14 @@ export default async function Script(client: Client) {
   const gameClasses = client.game.classes
   const baseLevel = new gameClasses.level.GridLevel("Belos", 4, 6)
   const player = new gameClasses.entity.Actor("Mana")
-  client.game.current.player = player
+  client.game.playerCharacter = player
   const item1 = new gameClasses.entity.Item("Bow of Iris")
   const item2 = new gameClasses.entity.Item("Jem")
   const startingPosition = new Position(baseLevel, 0, 0)
-
   player.inventory?.add(item1)
   player.place(startingPosition)
   startingPosition.addEntity(item2)
+
 
   let i = await client.dialog(
     `It seems you are using typescript...
@@ -39,7 +39,7 @@ export default async function Script(client: Client) {
         However, the person greets you with big smile.
       `)
       break
-    case '103':
+    case '201':
       i = await client.dialogWithNext(`
         <div>
           You try to communicate...

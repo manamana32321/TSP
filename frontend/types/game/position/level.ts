@@ -3,6 +3,9 @@ import Position from "./";
 import { InvalidPositionError } from "./error";
 
 export default class Level extends BaseEntity {
+  public startingTileX = 0
+  public startingTileY = 0
+
   constructor(public name: string) {
     super(name)
   }
@@ -10,7 +13,6 @@ export default class Level extends BaseEntity {
 
 export class GridLevel extends Level {
   private grid: Position[][]
-
   constructor(
     public name: string,
     private readonly xLength: number,

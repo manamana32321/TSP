@@ -2,41 +2,22 @@ import { store } from '@/store';
 import { InputOption } from '../../types/input';
 import { setInputType, setOptions, setUserInput, setWaitForUserInput } from '@/components/Input/inputSlice';
 import { setContent } from '@/components/Dialog/dialogSlice';
-
-import Position from '../../types/game/position';
-import Level, { GridLevel } from '../../types/game/position/level';
-import { PositionError, InvalidPositionError } from '../../types/game/position/error';
-import BaseEntity from '../../types/game/base';
-import Actor from '../../types/game/actor';
-import Item from '../../types/game/item';
+import Game from './game';
 
 export default class Client {
   private static instance: Client;
   private readonly dispatch;
   private userInputResolver: ((value: string) => void) | null = null;
-  public currentActor: Actor | null = null;
+  public game;
 
   public readonly ui: {
     setInputType: typeof setInputType
   }
-  public readonly game = {
-    classes: {
-      level: {Position, Level, GridLevel},
-      entity: {BaseEntity, Actor, Item},
-    },
-    errors: {
-      level: {PositionError, InvalidPositionError}
-    },
-    current: {
-      player: this.currentActor,
-    }
-  }
-
+  
   private constructor() {
     this.dispatch = store.dispatch;
-    this.ui = { // proxy
-      setInputType
-    };
+    this.ui = { setInputType };
+    this.game = new Game(this.dispatch)
   }
 
   static getInstance() {
