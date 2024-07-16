@@ -7,6 +7,9 @@ import SidebarRight from '../components/SidebarRight'
 import Input from '../components/Input'
 import Dialog from '../components/Dialog'
 import Client from '../client'
+import { enableMapSet } from 'immer';
+
+import { useEffect } from 'react';
 
 import {
   ResizableHandle,
@@ -26,8 +29,23 @@ export default function Home() {
 }
 
 function HomeContent() {
+  enableMapSet()
   const client = Client.getInstance()
-  client.runScript(TSScript)
+  
+  useEffect(() => {
+    client.runScript(TSScript)
+    
+    const handleKeyPress = (event: KeyboardEvent) => {
+      const pc = client.game.playerCharacter
+      if (pc) {
+        client.game.movement.handleKeyPress(event, pc)};
+    }
+    window.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [client]);
 
   return (
     <div className={styles.container}>

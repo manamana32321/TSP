@@ -1,16 +1,21 @@
 import Client from "@/client"
 import Position from "../types/game/position"
+import { GridDirection } from "../types/game/position/level"
 
 export default async function Script(client: Client) {
   const gameClasses = client.game.classes
   const baseLevel = new gameClasses.level.GridLevel("Belos", 4, 6)
   const player = new gameClasses.entity.Actor("Mana")
+  const a2 = new gameClasses.entity.Actor("Zed")
   client.game.playerCharacter = player
   const item1 = new gameClasses.entity.Item("Bow of Iris")
   const item2 = new gameClasses.entity.Item("Jem")
   const startingPosition = new Position(baseLevel, 0, 0)
   player.inventory?.add(item1)
-  player.place(startingPosition)
+  player.position = startingPosition
+  client.game.movement.travel(player, GridDirection.Up)
+  // TODO: Should be able to move with Actor instance
+  // ex) player.travel(direction)
   startingPosition.addEntity(item2)
 
 
@@ -57,6 +62,8 @@ export default async function Script(client: Client) {
       { selectId: 'Shield', name: 'Shield' },
     ]
   )
+  client.game.playerCharacter = a2
+  a2.position = startingPosition
   const starterGift = new gameClasses.entity.Item(i)
   player.inventory?.add(starterGift)
   await client.dialogWithNext(`Good! You got a new ${starterGift.name}`)
