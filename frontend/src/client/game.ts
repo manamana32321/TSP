@@ -1,8 +1,6 @@
 import { Dispatch } from 'redux';
 import { 
   setPlayerCharacter, addEntity, deleteEntity, 
-  addActor, deleteActor, addLevel, deleteLevel, 
-  addItem, deleteItem 
 } from '@/app/gameSlice';
 import Actor from "../../types/game/actor";
 import GameError from "../../types/game/error";
@@ -22,7 +20,7 @@ export default class Game<L extends Level> {
   private _entities: Set<BaseEntity>
   private _actors: Set<Actor<L>>
   private _levels: Set<L>
-  private _items: Set<Item>
+  private _items: Set<Item<L>>
 
   public classes = {
     level: { Position, Level, GridLevel },
@@ -39,7 +37,7 @@ export default class Game<L extends Level> {
     this._entities = new Set<BaseEntity>()
     this._actors = new Set<Actor<L>>()
     this._levels = new Set<L>()
-    this._items = new Set<Item>()
+    this._items = new Set<Item<L>>()
     this.movement = new Movement<L>(this.dispatch)
   }
 
@@ -71,12 +69,12 @@ export default class Game<L extends Level> {
   }
   addActor(actor: Actor<L>) {
     this._actors.add(actor)
-    this.dispatch(addActor(actor))
+    this.dispatch(addEntity(actor))
     this.addEntity(actor)
   }
   deleteActor(actor: Actor<L>) {
     this._actors.delete(actor)
-    this.dispatch(deleteActor(actor))
+    this.dispatch(deleteEntity(actor))
     this.deleteEntity(actor)
   }
 
@@ -86,13 +84,13 @@ export default class Game<L extends Level> {
   }
   addLevel(level: L) {
     this._levels.add(level)
-    this.dispatch(addLevel(level))
+    this.dispatch(addEntity(level))
     this.addEntity(level)
   }
   deleteLevel(level: L) {
     this._levels.delete(level)
     new Set<L>(Array.from(this._levels))
-    this.dispatch(deleteLevel(level))
+    this.dispatch(deleteEntity(level))
     this.deleteEntity(level)
   }
 
@@ -100,14 +98,14 @@ export default class Game<L extends Level> {
   get items() {
     return this._items
   }
-  addItem(item: Item) {
+  addItem(item: Item<L>) {
     this._items.add(item)
-    this.dispatch(addItem(item))
+    this.dispatch(addEntity(item))
     this.addEntity(item)
   }
-  deleteItem(item: Item) {
+  deleteItem(item: Item<L>) {
     this._items.delete(item)
-    this.dispatch(deleteItem(item))
+    this.dispatch(deleteEntity(item))
     this.deleteEntity(item)
   }
 }

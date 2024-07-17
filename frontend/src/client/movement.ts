@@ -4,7 +4,7 @@ import GameError from "../../types/game/error";
 import Position from "../../types/game/position";
 import Level, { GridLevel } from "../../types/game/position/level";
 import { Direction, GridDirection } from "../../types/game/position/level";
-import { setActorPosition } from "@/app/gameSlice";
+import { setEntityPosition } from "@/app/gameSlice";
 
 export abstract class BaseMovement<L extends Level> {
   protected abstract readonly dispatch: any
@@ -46,11 +46,11 @@ export default class Movement<L extends Level> extends BaseMovement<L> {
     
       if (currentLevel.isValidTile(newPositionX, newPositionY)) {
         const newPosition = new Position(currentLevel, newPositionX, newPositionY)
-        this.dispatch(setActorPosition([actor, newPosition]))
-        console.log(`${actor} traveled from ${currentPosition} to ${newPosition}`)
+        this.dispatch(setEntityPosition([actor, newPosition]))
+        console.log(`${actor} traveled ${currentPosition} -> ${newPosition}`)
         return newPosition
       }
-      console.warn(`${actor} failed to travel from ${currentPosition} to ${currentLevel}(${newPositionX}, ${newPositionY})`)
+      console.warn(`${actor} failed to travel ${currentPosition} -> ${currentLevel}(${newPositionX}, ${newPositionY})`)
       return null
     }
 

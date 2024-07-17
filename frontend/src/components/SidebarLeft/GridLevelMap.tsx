@@ -37,10 +37,7 @@ export default function GridLevelMap() {
   )}, [level])
 
   useEffect(() => {
-    console.log(position)
-    if (!position) {
-      return
-    }
+    if (!position) return
 
     // handle position change
     setGrid(prevGrid => {

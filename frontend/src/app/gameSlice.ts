@@ -4,13 +4,14 @@ import Actor from '../../types/game/actor';
 import Level from '../../types/game/position/level';
 import Item from '../../types/game/item';
 import Position from '../../types/game/position';
+import { InvalidTypeError } from '../../types/game/error';
 
 interface GameState {
   playerCharacter: Actor<any> | null;
   entities: Set<BaseEntity>;
   actors: Set<Actor<any>>;
   levels: Set<Level>;
-  items: Set<Item>;
+  items: Set<Item<any>>;
 }
 
 const initialState: GameState = {
@@ -18,7 +19,7 @@ const initialState: GameState = {
   entities: new Set<BaseEntity>,
   actors: new Set<Actor<any>>,
   levels: new Set<Level>,
-  items: new Set<Item>,
+  items: new Set<Item<any>>,
 };
 
 const gameSlice = createSlice({
@@ -26,52 +27,73 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     setPlayerCharacter(state, action: PayloadAction<Actor<any> | null>) {
-      state.playerCharacter = action.payload;
+      state.playerCharacter = action.payload
       if (action.payload) {
-        state.actors.add(action.payload)
+        state.actors = new Set(state.actors.add(action.payload))
       }
     },
 
+    // BaseEntity
     addEntity(state, action: PayloadAction<BaseEntity>) {
-      state.entities = new Set<BaseEntity>([...state.entities, action.payload])
+      const entity = action.payload;
+      const entityType = action.payload.constructor.name;
+      state.entities = new Set([...state.entities, entity]);
+      switch (entityType) {
+        case 'Actor':
+          state.actors = new Set([...state.actors, entity as Actor<any>]);
+          break;
+        case 'Item':
+          state.items = new Set([...state.items, entity as Item<any>]);
+          break;
+        case 'Level':
+          state.levels = new Set([...state.levels, entity as Level]);
+          break;
+        default:
+          throw new InvalidTypeError(`Invalid type '${entityType}'`);
+      }
     },
     deleteEntity(state, action: PayloadAction<BaseEntity>) {
-      state.entities = new Set<BaseEntity>([...state.entities].filter(e => e !== action.payload))
-    },
-
-    addActor(state, action: PayloadAction<Actor<any>>) {
-      state.actors.add(action.payload);
-      state.entities.add(action.payload);
-    },
-    deleteActor(state, action: PayloadAction<Actor<any>>) {
-      state.actors = state.actors.add(action.payload);
-      state.entities = state.entities.add(action.payload);
-    },
-    setActorPosition(state, action: PayloadAction<[Actor<any>, Position<any>]>) {
-      const [actor, position] = action.payload
-      const foundActor = Array.from(state.actors).find(element => element === actor);
-      if (foundActor) {
-        foundActor.position = position
-        state.actors = new Set<Actor<any>>([...state.actors] as Actor<any>[])
+      const entityType = action.payload.constructor.name;
+      state.entities = new Set([...state.entities].filter(e => e !== action.payload))
+      switch (entityType) {
+        case 'Actor':
+          state.actors = new Set([...state.actors].filter(e => e.id !== action.payload.id));
+          break;
+        case 'Item':
+          state.items = new Set([...state.items].filter(e => e.id !== action.payload.id));
+          break;
+        case 'Level':
+          state.levels = new Set([...state.levels].filter(e => e.id !== action.payload.id));
+          break;
+        default:
+          throw new InvalidTypeError(`Invalid type '${entityType}'`);
       }
     },
 
-    addLevel(state, action: PayloadAction<Level>) {
-      state.levels.add(action.payload);
-      state.entities.add(action.payload);
+    // Position
+    setEntityPosition(state, action: PayloadAction<[BaseEntity, Position<any>]>) {
+      const [entity, position] = action.payload
+      const entityType = entity.constructor.name
+      let foundEntity
+      switch (entityType) {
+        case 'Actor':
+          foundEntity = Array.from(state.actors).find(element => element.id === entity.id)
+          if (foundEntity) {
+            foundEntity.position = position
+            state.actors = new Set(state.actors)
+          }
+          break
+        case 'Item':
+          foundEntity = Array.from(state.items).find(element => element.id === entity.id)
+          if (foundEntity) {
+            foundEntity.position = position
+            state.items = new Set(state.items)
+          }
+          break
+        default:
+          throw new InvalidTypeError(`Not positionable type '${entityType}'`)
+      }
     },
-    deleteLevel(state, action: PayloadAction<Level>) {
-      state.levels = state.levels.add(action.payload);
-      state.entities = state.entities.add(action.payload);
-    },
-    addItem(state, action: PayloadAction<Item>) {
-      state.items.add(action.payload);
-      state.entities.add(action.payload);
-    },
-    deleteItem(state, action: PayloadAction<Item>) {
-      state.items = state.items.add(action.payload);
-      state.entities = state.entities.add(action.payload);
-    }
   }
 });
 
@@ -79,13 +101,7 @@ export const {
   setPlayerCharacter,
   addEntity,
   deleteEntity,
-  addActor,
-  deleteActor,
-  setActorPosition,
-  addLevel,
-  deleteLevel,
-  addItem,
-  deleteItem
+  setEntityPosition,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
