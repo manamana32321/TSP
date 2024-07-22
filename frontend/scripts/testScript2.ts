@@ -4,13 +4,13 @@ import { GridDirection } from "../types/game/position/level"
 
 export default async function Script(client: Client) {
   const gameClasses = client.game.classes
-  const baseLevel = new gameClasses.level.GridLevel("Belos", 4, 6)
+  const baseLevel = new gameClasses.level.GridLevel("Belos", 6, 8)
   const player = new gameClasses.entity.Actor("Mana")
   const a2 = new gameClasses.entity.Actor("Zed")
   client.game.playerCharacter = player
   const item1 = new gameClasses.entity.Item("Bow of Iris")
   const item2 = new gameClasses.entity.Item("Jem")
-  const startingPosition = new Position(baseLevel, 0, 0)
+  const startingPosition = new Position(baseLevel, baseLevel.xLength / 2, baseLevel.yLength / 2)
   player.inventory?.add(item1)
   player.position = startingPosition
   client.game.movement.travel(player, GridDirection.Up)
