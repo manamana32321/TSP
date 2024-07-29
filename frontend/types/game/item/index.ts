@@ -16,19 +16,26 @@ export default class Item<L extends Level>
 
 export interface Inventoriable<L extends Level> {
   inventory: Inventory<L> | null
+
+  addItem(item: Item<L>): void
+  popItem(item: Item<L>): Item<L>
 }
 
 export class Inventory<L extends Level> {
-  private list: Item<L>[]
+  private _list: Item<L>[]
   constructor() {
-    this.list = []
+    this._list = []
   }
 
   add(e: Item<L>) {
-    this.list.push(e)
+    this._list.push(e)
   }
 
   remove(entity: Item<L>) {
-    this.list = this.list.filter(element => element !== entity)
+    this._list = this._list.filter(element => element !== entity)
+  }
+
+  list() {
+    return this._list
   }
 }

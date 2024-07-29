@@ -1,13 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
-import inputSlice from './components/Input/inputSlice'
-import dialogSlice from './components/Dialog/dialogSlice'
-import gameSlice from './app/gameSlice'
+import inputSlice from './ui/inputSlice'
+import dialogSlice from './ui/dialogSlice'
+import gameSlice from './gameSlice'
+import popupSlice from './ui/popupSlice'
 
 export const store = configureStore({
   reducer: {
     game: gameSlice,
     input: inputSlice,
     dialog: dialogSlice,
+    popup: popupSlice,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
   devTools: true,

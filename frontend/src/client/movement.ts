@@ -1,10 +1,11 @@
+import CustomDebugger, { Debugable } from "@/utils/debugger";
 import { NotImplementedError } from "../../types/error";
 import Actor from "../../types/game/actor";
 import GameError from "../../types/game/error";
 import Position from "../../types/game/position";
 import Level, { GridLevel } from "../../types/game/position/level";
 import { Direction, GridDirection } from "../../types/game/position/level";
-import { setEntityPosition } from "@/app/gameSlice";
+import { setEntityPosition } from "@/store/gameSlice";
 
 export abstract class BaseMovement<L extends Level> {
   protected abstract readonly dispatch: any
@@ -13,9 +14,13 @@ export abstract class BaseMovement<L extends Level> {
   abstract teleport(actor: Actor<L>, position: Position<L>): Position<L> | null
 }
 
-export default class Movement<L extends Level> extends BaseMovement<L> {
+export default class Movement<L extends Level>
+  extends BaseMovement<L>
+  implements Debugable
+  {
   constructor(
-    protected readonly dispatch: any
+    protected readonly dispatch: any,
+    readonly _debugger: CustomDebugger,
   ) {
     super()
   }
@@ -47,10 +52,10 @@ export default class Movement<L extends Level> extends BaseMovement<L> {
       if (currentLevel.isValidTile(newPositionX, newPositionY)) {
         const newPosition = new Position(currentLevel, newPositionX, newPositionY)
         this.dispatch(setEntityPosition([actor, newPosition]))
-        console.log(`${actor} traveled ${currentPosition} -> ${newPosition}`)
+        this._debugger.log(`${actor} traveled ${currentPosition} -> ${newPosition}`)
         return newPosition
       }
-      console.warn(`${actor} failed to travel ${currentPosition} -> ${currentLevel}(${newPositionX}, ${newPositionY})`)
+      this._debugger.log(`${actor} failed to travel ${currentPosition} -> ${currentLevel}(${newPositionX}, ${newPositionY})`)
       return null
     }
 

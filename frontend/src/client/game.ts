@@ -1,19 +1,23 @@
 import { Dispatch } from 'redux';
 import { 
   setPlayerCharacter, addEntity, deleteEntity, 
-} from '@/app/gameSlice';
+} from '@/store/gameSlice';
 import Actor from "../../types/game/actor";
 import GameError from "../../types/game/error";
 import Position from "../../types/game/position";
 import Level, { GridLevel } from "../../types/game/position/level";
 import BaseEntity from '../../types/game/base';
-import Item from '../../types/game/item';
+import Item, { Inventory } from '../../types/game/item';
 import Movement from './movement';
+import CustomDebugger, { Debugable } from '@/utils/debugger';
+import { UiSet } from '.';
+import { createInventoryUI, INVENTORY_POPUP_PREFIX } from '@/components/shared/Inventory';
+import { createPopupOption } from '@/components/common/Popup';
 
 /**
  * Proxy class for script writers' intellisense
  */
-export default class Game<L extends Level> {
+export default class Game<L extends Level> implements Debugable {
   private readonly dispatch: Dispatch;
 
   private _playerCharacter: Actor<L> | null = null
@@ -32,13 +36,13 @@ export default class Game<L extends Level> {
   
   public movement: Movement<L>
 
-  constructor(dispatch: Dispatch) {
+  constructor(dispatch: Dispatch, public readonly ui: UiSet, readonly _debugger: CustomDebugger) {
     this.dispatch = dispatch
     this._entities = new Set<BaseEntity>()
     this._actors = new Set<Actor<L>>()
     this._levels = new Set<L>()
     this._items = new Set<Item<L>>()
-    this.movement = new Movement<L>(this.dispatch)
+    this.movement = new Movement<L>(this.dispatch, this._debugger)
   }
 
   get playerCharacter() { 
@@ -47,7 +51,24 @@ export default class Game<L extends Level> {
 
   set playerCharacter(pc: Actor<L> | null) {
     this._playerCharacter = pc
+    if (this._playerCharacter && !this._playerCharacter.inventory) {
+      this._playerCharacter.inventory = new Inventory()
+    }
     this.dispatch(setPlayerCharacter(pc))
+  }
+
+  togglePlayerCharacterInventory() {
+    if (!this._playerCharacter) {
+      this._debugger.error(
+        `Failed to open inventory. Player Character is invalid: '${this._playerCharacter}'`)
+      return
+    }
+    const popupIdPrefix = INVENTORY_POPUP_PREFIX
+    const popupChildren = createInventoryUI({ owner: this._playerCharacter })
+    const popupOption: createPopupOption = {
+      title: `Inventory of '${this._playerCharacter}'`
+    }
+    this.ui.popup.togglePopup(popupIdPrefix, popupChildren, popupOption)
   }
 
   // BaseEntity

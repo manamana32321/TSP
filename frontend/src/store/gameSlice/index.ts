@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import BaseEntity from '../../types/game/base';
-import Actor from '../../types/game/actor';
-import Level from '../../types/game/position/level';
-import Item from '../../types/game/item';
-import Position from '../../types/game/position';
-import { InvalidTypeError } from '../../types/game/error';
+import BaseEntity from '../../../types/game/base';
+import Actor from '../../../types/game/actor';
+import Level from '../../../types/game/position/level';
+import Item from '../../../types/game/item';
+import Position from '../../../types/game/position';
+import { InvalidTypeError } from '../../../types/game/error';
 
 interface GameState {
   playerCharacter: Actor<any> | null;
@@ -16,10 +16,10 @@ interface GameState {
 
 const initialState: GameState = {
   playerCharacter: null,
-  entities: new Set<BaseEntity>,
-  actors: new Set<Actor<any>>,
-  levels: new Set<Level>,
-  items: new Set<Item<any>>,
+  entities: new Set<BaseEntity>(),
+  actors: new Set<Actor<any>>(),
+  levels: new Set<Level>(),
+  items: new Set<Item<any>>(),
 };
 
 const gameSlice = createSlice({

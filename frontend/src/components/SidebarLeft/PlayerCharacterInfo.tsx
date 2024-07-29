@@ -14,6 +14,6 @@ export default function PlayerCharacterInfo() {
       style={{ width: 'auto', height: 'auto' }}
       priority
     />
-    <p>Name: {pc?.name}</p>
+    <p className="bg-primary rounded-lg py-1 px-2 text-white mt-2">Name: {pc?.name}</p>
   </>
 }

@@ -3,6 +3,7 @@ import Position from "../types/game/position"
 import { GridDirection } from "../types/game/position/level"
 
 export default async function Script(client: Client) {
+  client.setDebugState(true)
   const gameClasses = client.game.classes
   const baseLevel = new gameClasses.level.GridLevel("Belos", 6, 8)
   const player = new gameClasses.entity.Actor("Mana")
@@ -65,6 +66,6 @@ export default async function Script(client: Client) {
   client.game.playerCharacter = a2
   a2.position = startingPosition
   const starterGift = new gameClasses.entity.Item(i)
-  player.inventory?.add(starterGift)
+  client.game.playerCharacter.inventory?.add(starterGift)
   await client.dialogWithNext(`Good! You got a new ${starterGift.name}`)
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import isEqual from "react-fast-compare";
 import { GridLevel } from "../../../types/game/position/level";
+import GridLevelMap from "../shared/LevelMap";
 
 interface TileSetWrapperProp {
   children: React.ReactNode
@@ -26,7 +27,7 @@ function TileSetWrapper({
   const translateY = positionY * (tileSize + tileGap) - mapHeight/2 - tileSize*1.5
 
   return (
-    <div style={{ overflow: 'hidden', height, backgroundColor }}>
+    <div style={{ overflow: 'hidden', height, backgroundColor }} className="rounded-lg">
       <div
         style={{
           width: mapWidth, height: mapHeight, backgroundColor,
@@ -40,43 +41,14 @@ function TileSetWrapper({
   )
 }
 
-interface TileSetProp {
-  grid: LevelTileProp[][]
-  cols: number
-  rows: number
-  gap: number
-  zIndex: number
-}
-
-function TileSet({ grid, cols, rows, gap, zIndex }: TileSetProp) {
-  const gridClassName = `grid`;
-  const gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-  const gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
-
-  return <div
-    className={gridClassName}
-    style={{
-      gridTemplateColumns,
-      gridTemplateRows,
-      gap,
-      zIndex,
-    }}
-  >{grid
-    .slice()
-    .reverse()
-    .flat()
-    .map((tile, index) => <LevelTile key={index} {...tile} />)}
-  </div>
-}
-
-interface LevelTileProp {
+export interface LevelTileProp {
   size: number
   focused?: boolean
   backgroundColor?: string
   disabled?: boolean
 }
 
-function LevelTile({ size, focused, backgroundColor, disabled }: LevelTileProp) {
+export function LevelTile({ size, focused, backgroundColor, disabled }: LevelTileProp) {
   backgroundColor = focused ? "white" : "gray"
   const border = focused ? "border border-2 border-rose-500" : "border border-black"
   const opacity = disabled ? "opacity-50" : ""
@@ -92,7 +64,7 @@ function LevelTile({ size, focused, backgroundColor, disabled }: LevelTileProp) 
   );
 }
 
-export default function GridLevelMap() {
+export default function GridLevelMiniMap() {
   const position = useSelector((state: RootState) => state.game.playerCharacter?.position, isEqual);
   const level = useSelector((state: RootState) => state.game.playerCharacter?.position?.level, isEqual) as GridLevel | undefined;
 
@@ -128,8 +100,8 @@ export default function GridLevelMap() {
   }, [position]);
 
   return (
-    <>
-      <p>Map: {position?.level.name}</p>
+    <div className="bg-secondary rounded-lg" style={{ overflow: 'hidden' }}>
+      <p className="bg-primary rounded-lg py-1 px-2 text-white mb-1">Map: {position?.level.name}</p>
       {grid && level && position ? 
         <TileSetWrapper
           backgroundColor="black"
@@ -141,12 +113,12 @@ export default function GridLevelMap() {
           positionX={position.x}
           positionY={position.y}
           >
-          <TileSet
+          <GridLevelMap
             grid={grid}
             cols={level.xLength} rows={level.yLength}
             gap={tileGap} zIndex={1} />
         </TileSetWrapper>
        : ""}
-    </>
+    </div>
   );
 }
